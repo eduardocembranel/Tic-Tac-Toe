@@ -311,7 +311,7 @@ function showEndGameMessage() {
 
   } else {
     ctx.fillStyle = 'black';
-    ctx.fillText('You lose!', canvas.width/2, canvas.height/2);
+    ctx.fillText('YOU LOSE!', canvas.width/2, canvas.height/2);
   }
 }
 
