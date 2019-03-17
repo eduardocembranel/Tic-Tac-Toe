@@ -17,8 +17,8 @@ var game =
     [0, 0, 0],
     [0, 0, 0]
   ],
-  playing: false,
-  player: undefined
+  playing: true,
+  player: 1
 };
 
 function Button(xi, xf, yi, yf, index) {
