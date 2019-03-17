@@ -304,7 +304,6 @@ function showEndGameMessage(gamesState) {
   if (gamesState === 0) {
     ctx.fillText('IT\'S A DRAW!', canvas.width/2, canvas.height/2);
   } else {
-    ctx.fillStyle = 'black';
     ctx.fillText('YOU LOSE!', canvas.width/2, canvas.height/2);
   }
 }
