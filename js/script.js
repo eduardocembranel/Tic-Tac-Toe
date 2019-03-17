@@ -176,20 +176,20 @@ function evaluate(board) {
   if (winner === undefined) {
     return 0;
   } else if (winner === 1) {
-    return 1;
+    return 10;
   } else if (winner === 2) {
-    return -1;
+    return -10;
   }
 }
 
-function minimax(board, player, isMax) {
+function minimax(board, player, isMax, depth) {
   var weight = evaluate(board);
 
-  if (weight === 1) {
-    return 1;
+  if (weight === 10) {
+    return weight - depth;
   }
-  if (weight === -1) {
-    return -1;
+  if (weight === -10) {
+    return weight + depth;
   }
   if (fullBoard(board)) {
     return 0;
@@ -204,9 +204,9 @@ function minimax(board, player, isMax) {
         if (emptySlot(board, i, j)) {
           board[i][j] = player;
           if (player === 1) {
-            bestWeight = Math.max(bestWeight, minimax(board, 2, !isMax)); 
+            bestWeight = Math.max(bestWeight, minimax(board, 2, !isMax, depth + 1)); 
           } else {
-            bestWeight = Math.max(bestWeight, minimax(board, 1, !isMax)); 
+            bestWeight = Math.max(bestWeight, minimax(board, 1, !isMax, depth + 1)); 
           }
           board[i][j] = 0;
         }
@@ -219,9 +219,9 @@ function minimax(board, player, isMax) {
         if (emptySlot(board, i, j)) {
           board[i][j] = player;
           if (player === 1) {
-            bestWeight = Math.min(bestWeight, minimax(board, 2, !isMax));
+            bestWeight = Math.min(bestWeight, minimax(board, 2, !isMax, depth + 1));
           } else {
-            bestWeight = Math.min(bestWeight, minimax(board, 1, !isMax));
+            bestWeight = Math.min(bestWeight, minimax(board, 1, !isMax, depth + 1));
           }
           board[i][j] = 0;
         }
@@ -261,7 +261,7 @@ function generateBestMove(player) {
     for (var j = 0; j < 3; ++j) {
       if (emptySlot(board, i, j)) {
         board[i][j] = 1;
-        var currentWeight = minimax(board, 2, false);
+        var currentWeight = minimax(board, 2, false, 0);
         board[i][j] = 0;
 
         if (currentWeight > bestWeight) {
@@ -296,19 +296,13 @@ document.getElementById('btn-right').addEventListener('click', function() {
   
 });
 
-function showEndGameMessage() {
+function showEndGameMessage(gamesState) {
   ctx.font = 'bold 65px courier';
   ctx.textAlign = 'center';
+  ctx.fillStyle = 'black';
 
-  if (fullBoard(game.board)) {
-    ctx.fillStyle = 'black';
-
-    //debug
-    //var str = canvas.width + ' ' + canvas.height;
-    //ctx.fillText(str, canvas.width/2, canvas.height/2); 
+  if (gamesState === 0) {
     ctx.fillText('IT\'S A DRAW!', canvas.width/2, canvas.height/2);
-
-
   } else {
     ctx.fillStyle = 'black';
     ctx.fillText('YOU LOSE!', canvas.width/2, canvas.height/2);
@@ -332,7 +326,8 @@ canvas.addEventListener('click', function(e) {
 
   if (clickedButton !== undefined && game.playing === true && emptySlot(game.board, i, j)) {
     updateBoard(i, j, true);
-    if (endGame(game.board) === -1) {
+    var gamesState = endGame(game.board);
+    if (gamesState === -1) {
       if (game.player === 1) {
         var nextMove = generateBestMove(2);
       } else {
@@ -344,12 +339,13 @@ canvas.addEventListener('click', function(e) {
     } else {
       game.playing = false;
       updateCanvas();
-      showEndGameMessage();
+      showEndGameMessage(gamesState);
     }
-    if (endGame(game.board) !== -1) {
+    gamesState = endGame(game.board);
+    if (gamesState !== -1) {
       game.playing = false;
       updateCanvas();
-      showEndGameMessage();
+      showEndGameMessage(gamesState);
     } else {
       updateCanvas();
     }
